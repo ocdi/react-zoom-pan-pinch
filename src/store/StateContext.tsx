@@ -31,7 +31,25 @@ import {
 } from "./interfaces/stateContextInterface";
 import { getValidPropsFromObject } from "./propsHandlers";
 
-const Context = React.createContext({});
+const Context = React.createContext<{
+  loaded: boolean;
+  state: {
+    positionX;
+    positionY;
+    scale;
+    options: { wrapperClass; contentClass };
+  };
+  dispatch: {
+    setScale: (newScale: any, speed?: number, type?: string) => void;
+    setPositionX: (newPosX: any, speed?: number, type?: string) => void;
+    setPositionY: (newPosY: any, speed?: number, type?: string) => void;
+    setDefaultState: () => void;
+  };
+  nodes: {
+    setWrapperComponent: (component: HTMLDivElement) => void;
+    setContentComponent: (component: HTMLDivElement) => void;
+  };
+}>(undefined);
 
 let wheelStopEventTimer = null;
 const wheelStopEventTime = 180;

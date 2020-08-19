@@ -2,48 +2,45 @@ import React from "react";
 import { Context } from "../store/StateContext";
 import styles from "./TransformComponent.module.css";
 
-class TransformComponent extends React.Component {
-  private wrapperRef = React.createRef<HTMLDivElement>();
-  private contentRef = React.createRef<HTMLDivElement>();
+const TransformComponent: React.FC = ({ children }) => {
+  const wrapperRef = React.useRef<HTMLDivElement>();
+  const contentRef = React.useRef<HTMLDivElement>();
 
-  componentDidMount() {
-    const { nodes } = this.context;
-    nodes.setWrapperComponent(this.wrapperRef.current);
-    nodes.setContentComponent(this.contentRef.current);
-  }
+  const context = React.useContext(Context);
 
-  render() {
-    const { children } = this.props;
-    const {
-      state: {
-        positionX,
-        positionY,
-        scale,
-        options: { wrapperClass, contentClass },
-      },
-    } = this.context;
+  React.useEffect(() => {
+    const { nodes } = context;
+    nodes.setWrapperComponent(wrapperRef.current);
+    nodes.setContentComponent(contentRef.current);
+  }, []);
 
-    const style = {
-      WebkitTransform: `translate(${positionX}px, ${positionY}px) scale(${scale})`,
-      transform: `translate(${positionX}px, ${positionY}px) scale(${scale})`,
-    };
-    return (
+  const {
+    state: {
+      positionX,
+      positionY,
+      scale,
+      options: { wrapperClass, contentClass },
+    },
+  } = context;
+
+  const style = {
+    WebkitTransform: `translate(${positionX}px, ${positionY}px) scale(${scale})`,
+    transform: `translate(${positionX}px, ${positionY}px) scale(${scale})`,
+  };
+  return (
+    <div
+      ref={wrapperRef}
+      className={`react-transform-component ${styles.container} ${wrapperClass}`}
+    >
       <div
-        ref={this.wrapperRef}
-        className={`react-transform-component ${styles.container} ${wrapperClass}`}
+        ref={contentRef}
+        className={`react-transform-element ${styles.content} ${contentClass}`}
+        style={style}
       >
-        <div
-          ref={this.contentRef}
-          className={`react-transform-element ${styles.content} ${contentClass}`}
-          style={style}
-        >
-          {children}
-        </div>
+        {children}
       </div>
-    );
-  }
-}
-
-TransformComponent.contextType = Context;
+    </div>
+  );
+};
 
 export { TransformComponent };
